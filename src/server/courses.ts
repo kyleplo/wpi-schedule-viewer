@@ -32,7 +32,7 @@ export function courseRoutes(app: express.Express) {
         let userCourses: Types.CourseDBTuple[];
         bb.on('file', async (name, file, info) => {
             const { filename, encoding, mimeType } = info;
-            if (!filename.includes("View_My_Courses") || mimeType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+            if (mimeType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
                 res.status(400).json({
                     error: `Invalid Excel file`
                 });
@@ -51,10 +51,8 @@ export function courseRoutes(app: express.Express) {
                 res.json(courseSections);
                 return;
             }else{
-                const courseYear: Number = userCourses[0].academicYear;
-                const newCourses: Types.CourseDBTuple[] = user.courses.filter(course => course.academicYear != courseYear).concat(userCourses as any[]);
-                //await user.updateOne({ courses: newCourses });
-                //const updatedUser = await User.findById(user._id)
+                const terms = userCourses.map(course => course.section[0] + course.academicYear);
+                const newCourses: Types.CourseDBTuple[] = user.courses.filter(course => !terms.includes(course.section[0] + course.academicYear)).concat(userCourses as any[]);
                 user.set('courses', newCourses);
                 await user.save()
                 const courseSections = await getCourseSections(user.courses);

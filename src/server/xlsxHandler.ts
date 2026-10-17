@@ -3,11 +3,6 @@ import { buffer } from "stream/consumers"
 import Stream from "stream"
 import { CourseDBTuple } from "../shared/types.js";
 
-type UserCourse = {
-    section: string, // ex. "CS 4342-A01"
-    year: number // ex 2026
-};
-
 /**
  * 
  * @param file readable stream returned as file from busboy library
@@ -17,54 +12,61 @@ export async function parseXLSX(file: Stream.Readable): Promise<CourseDBTuple[]>
     const workbook = XLSX.read(await buffer(file), { dense: true, nodim: true });
     const sheet1 = workbook.Sheets[workbook.SheetNames[0]];
     const data: any[][] = XLSX.utils.sheet_to_json(sheet1, { header: 1 }); //sheet1["!data"]?.map((row) => row.map((cell) => cell.v));
-    if (data?.[3]?.[0] === null || data?.[3]?.[0] != "My Enrolled Courses") {
+
+    let sectionIndex = -1;
+    let periodIndex = -1;
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+
+        if (!row) {
+            break;
+        }
+
+        if ((row.includes("Section") || row.includes("Course Section Definition")) && (row.includes("Academic Period") || row.includes("Course Listing"))) {
+            sectionIndex = Math.max(row.indexOf("Section"), row.indexOf("Course Section Definition"));
+            periodIndex = Math.max(row.indexOf("Academic Period"), row.indexOf("Course Listing") - 1)
+            break;
+        }
+    }
+
+    if (sectionIndex === -1 || periodIndex === -1) {
         return [];
     }
-    const userCourses: UserCourse[] = [{ section: parseCourseSection(data?.[6][6]), year: normalizeYear(data?.[6][12]) }];
-    for (let i = 7, secondSem = false; ; i++) {
-        const dataRow = data?.[i];
-        if (dataRow.length < 14) {
-            if (secondSem) {
-                break;
-            }
-            while (data?.[i]?.[0] != "My Enrolled Courses" && i < 100) {
-                i++;
-            }
-            if (i >= 100) {
-                break;
-            }
-            i += 2;
-            secondSem = true;
+
+    const userCourses: CourseDBTuple[] = []
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+
+        if (!row) {
+            break;
+        }
+
+        if (!row[sectionIndex] || !row[periodIndex]) {
             continue;
         }
-        userCourses.push({ section: parseCourseSection(dataRow[6]), year: normalizeYear(dataRow[12]) });
+
+        const sectionSplit = row[sectionIndex].split("-");
+
+        if (sectionSplit.length < 2) {
+            continue;
+        }
+
+        const firstSemester = sectionSplit[1][0] === "A" || sectionSplit[1][0] === "B" || sectionSplit[1][0] === "F";
+        const period = row[periodIndex].split(" - ");
+        const year = parseInt(period[period.length - 1]);
+
+        if (sectionSplit[0].length < 6 || sectionSplit[1].trim().length < 2 || isNaN(year)) {
+            continue;
+        }
+
+        userCourses.push({
+            code: sectionSplit[0],
+            section: sectionSplit[1].trim().split("/")[0],
+            academicYear: firstSemester ? year : year - 1
+        })
     }
-    return userCourses.map((userCourse: UserCourse) => userCourseToDBTuple(userCourse));
-}
 
-function parseCourseSection(section: string): string {
-    if (section === undefined) {
-        return section;
-    }
-    return section.split(" -")?.[0];
-}
-
-function normalizeYear(raw: number): number {
-    return Math.floor((raw / 365) + 1900);
-}
-
-/**
- * Converts a userCourse object to a CourseDBTuple
- */
-function userCourseToDBTuple(userCourse: UserCourse): CourseDBTuple {
-    const codeSection = userCourse.section.split("-");
-    const code = codeSection?.[0];
-    const section = codeSection?.[1];
-    const term = section?.charAt(0);
-    const academicYear = userCourse.year - (term === 'A' || term === 'B' || term === 'F' ? 0 : 1);
-    return {
-        code,
-        section,
-        academicYear,
-    };
+    return userCourses;
 }
