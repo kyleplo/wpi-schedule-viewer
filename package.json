@@ -23,8 +23,8 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "start": "node src/server/index.js",
-    "dev": "npm run build && npm run start"
+    "start": "wrangler dev",
+    "dev": "wrangler dev"
   },
   "type": "module",
   "allowScripts": {

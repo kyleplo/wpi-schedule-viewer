@@ -18,5 +18,9 @@
 		"crons": [
 			"0 0 * * *"
 		]
+	},
+    "build": {
+		"watch_dir": "./src",
+		"command": "node build.mjs"
 	}
 }

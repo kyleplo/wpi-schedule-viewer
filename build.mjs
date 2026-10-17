@@ -18,13 +18,15 @@ await esbuild.build({
     format: "esm"
 });
 
-await esbuild.build({
-    entryPoints: ["src/server/index.ts"],
-    platform: "node",
-    bundle: true,
-    minify: true,
-    sourcemap: true,
-    external: ["express", "mongoose", "fs", "dotenv", "busboy", "xlsx", "stream", "node-fetch", "cookie-session", "ical-generator"],
-    format: "esm",
-    outdir: "src/server"
-});
+// Workers handles compiling the server
+
+// await esbuild.build({
+//     entryPoints: ["src/server/index.ts"],
+//     platform: "node",
+//     bundle: true,
+//     minify: true,
+//     sourcemap: true,
+//     external: ["express", "mongoose", "fs", "dotenv", "busboy", "xlsx", "stream", "node-fetch", "cookie-session", "ical-generator"],
+//     format: "esm",
+//     outdir: "src/server"
+// });

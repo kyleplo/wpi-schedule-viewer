@@ -9,6 +9,52 @@ import { Header } from "./Header.js";
 import { filterCourseSections } from "../shared/util"
 import { ShareDialog } from "./ShareDialog.jsx";
 import { TermSelect } from "./TermSelect.js"
+import { AcademicYearSelect } from "./AcademicYearSelect.jsx";
+
+function getAcademicYearAndTerm(): { year: number, term: Types.Term } {
+    const date = new Date();
+    
+    switch (date.getMonth()) {
+        case 0: // January
+        case 1: // February
+            return { year: date.getFullYear() - 1, term: "C" }
+        case 2: // March
+            if (date.getDate() < 10) {
+                return { year: date.getFullYear() - 1, term: "C" }
+            } else {
+                return { year: date.getFullYear() - 1, term: "D" }
+            }
+        case 3: // April
+            return { year: date.getFullYear() - 1, term: "D" }
+        case 4: // May
+            if (date.getDate() < 15) {
+                return { year: date.getFullYear() - 1, term: "D" }
+            } else {
+                return { year: date.getFullYear() - 1, term: "E1" }
+            }
+        case 5: // June
+            return { year: date.getFullYear() - 1, term: "E1" }
+        case 6: // July
+            return { year: date.getFullYear() - 1, term: "E2" }
+        case 7: // August
+            if (date.getDate() < 15) {
+                return { year: date.getFullYear() - 1, term: "E2" }
+            } else {
+                return { year: date.getFullYear(), term: "A" }
+            }
+        case 8: // September
+            return { year: date.getFullYear(), term: "A" }
+        case 9: // October
+            if (date.getDate() < 15) {
+                return { year: date.getFullYear(), term: "A" }
+            } else {
+                return { year: date.getFullYear(), term: "B" }
+            }
+        case 10: // November
+        default: // December
+            return { year: date.getFullYear(), term: "B" }
+    }
+}
 
 function App() {
 
@@ -17,12 +63,12 @@ function App() {
     // enum value
     enum Page{Index, Login, SignUp, Shared}
     const [page, setPage] = useState(Page.Index)
-    const [term, setTerm] = useState<Types.Term>("A");
+    const [term, setTerm] = useState<Types.Term>(getAcademicYearAndTerm().term);
     const [user, setUser] = useState<string |null>(null);
     //seperate useState to show another person's schdule, so it can work regardless of login status
     const [sharedUser, setSharedUser] = useState<string |null>(null);
-    const [academicYear, setAcademicYear] = useState(2026);
-    const [years, setYears] = useState([2026])
+    const [academicYear, setAcademicYear] = useState(getAcademicYearAndTerm().year);
+    const [years, setYears] = useState([academicYear])
     //sections cross all years and terms
     const [sections, setSections] = useState<Types.CourseSection[]>([]);
     const [filteredSections, setFilteredSections] = useState<Types.CourseSection[]>([]);
@@ -141,14 +187,8 @@ function App() {
             setSections={setSections} sections={sections} setIsCourses={setIsCourses} years={years} setYears={setYears}/>
             <main>
                 <div class="centered button-div">
-                    <select name="AcademicYearSelect" 
-                    aria-label="Select the Academic Year" 
-                    onChange={e => setAcademicYear(parseInt((e.target as HTMLSelectElement).value))}>
-                        {years.map((year)=>(
-                            <option value={year} key={year}>{year}-{year+1}</option>
-                        ))}
-                    </select>
-                    <TermSelect setTerm={setTerm} />
+                    <AcademicYearSelect setYear={setAcademicYear} years={years} year={academicYear} />
+                    <TermSelect setTerm={setTerm} term={term} />
                 </div>
                 <div class="sidescroller">
                     <Schedule sections={filteredSections} />
@@ -170,14 +210,8 @@ function App() {
             setSections={setSections} sections={sections} setIsCourses={setIsCourses} years={years} setYears={setYears}/>
             <main>
                 {isCourses && <div class='centered button-div'>
-                    <select name="AcademicYearSelect" 
-                    aria-label="Select the academic year" 
-                    onChange={e => setAcademicYear(parseInt((e.target as HTMLSelectElement).value))}>
-                        {years.map((year)=>(
-                            <option value={year} key={year}>{year}-{year+1}</option>
-                        ))}
-                    </select>
-                    <TermSelect setTerm={setTerm} />
+                    <AcademicYearSelect setYear={setAcademicYear} years={years} year={academicYear} />
+                    <TermSelect setTerm={setTerm} term={term} />
                 </div>}
                 
                 <div class="sidescroller">

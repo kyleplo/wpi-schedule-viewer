@@ -1,21 +1,28 @@
 import * as Types from "../shared/types";
 
+const terms: Record<Types.Term, string> = {
+    A: "A term",
+    B: "B term",
+    F: "Fall Semester",
+    C: "C term",
+    D: "D term",
+    S: "Spring Semester",
+    G: "Graduate Spring Late Start",
+    E1: "E1 term",
+    E2: "E2 term",
+    E: "Summer term"
+}
+
 export function TermSelect(props:{
         setTerm: (term: Types.Term) => void
+        term: Types.Term
 }){
     return <>
         <select class="centered" name="TermSelect" aria-label="Select the term" 
         onChange={e => props.setTerm((e.target as HTMLSelectElement).value as Types.Term)}>
-            <option value="A" selected>A term</option>
-            <option value="B">B term</option>
-            <option value="F">Fall Semester</option>
-            <option value="C">C term</option>
-            <option value="D">D term</option>
-            <option value="S">Spring Semester</option>
-            <option value="G">Graduate Spring Late Start</option>
-            <option value="E1">E1 term</option>
-            <option value="E2">E2 term</option>
-            <option value="E">Summer term</option>
+            {Object.entries(terms).map(term => {
+                return <option value={term[0]} selected={term[0] === props.term} key={term[0]}>{term[1]}</option>
+            })}
         </select>
     </>
 }
