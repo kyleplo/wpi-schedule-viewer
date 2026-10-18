@@ -96,14 +96,7 @@ function App() {
         setPage(Page.SignUp)
     }
 
-    // This function can be passed down to components and set as an onclick
-    // function for buttons which go to the shared schedule page
-    function loadShared(): void{
-        history.pushState({},"",`/user/${sharedUser}`)
-        setPage(Page.Shared)
-    }
-
-    const setPageWithUrL =()=>{
+    const setPageWithUrl =()=>{
         //produces the following array: [ "", "user", "6ac6e94ce0690abe701ae14a" ] or [""]
         const pathArray: string[] = window.location.pathname.split("/")
         if(pathArray.length === 3 && pathArray[1] == 'user'){
@@ -118,9 +111,9 @@ function App() {
     }
     //use effect to parse the url
     useEffect(()=>{
-        setPageWithUrL();
-        window.addEventListener('popstate', setPageWithUrL)
-        return () => window.removeEventListener("popstate", setPageWithUrL);
+        setPageWithUrl();
+        window.addEventListener('popstate', setPageWithUrl)
+        return () => window.removeEventListener("popstate", setPageWithUrl);
     },[])
 
     useEffect(() => {
@@ -161,9 +154,7 @@ function App() {
     if(!user && page == Page.Login){
         // Loads the login page only if the user is not logged in
         return <>
-            <Header loggedIn={false} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} 
-            term={term} user={user} academicYear={academicYear} setAcademicYear={setAcademicYear} 
-            setSections={setSections} sections={sections} setIsCourses={setIsCourses} years={years} setYears={setYears}/>
+            <Header loggedIn={false} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} setAcademicYear={setAcademicYear} setSections={setSections} sections={sections} setIsCourses={setIsCourses} />
             <main>
                 <AuthForm isLogin={true} onLogin={setUser} loadSignUp={loadSignUp} />
             </main>
@@ -172,9 +163,7 @@ function App() {
     else if(!user && page == Page.SignUp){
         // Loads the account creation page only if the user is not logged in
         return <>
-            <Header loggedIn={false} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} 
-            term={term} user={user} academicYear={academicYear} setAcademicYear={setAcademicYear} 
-            setSections={setSections} sections={sections} setIsCourses={setIsCourses} years={years} setYears={setYears}/>
+            <Header loggedIn={false} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} setAcademicYear={setAcademicYear} setSections={setSections} sections={sections} setIsCourses={setIsCourses} />
             <main>
                 <AuthForm isLogin={false} onLogin={setUser} loadLogin={loadLogin} />
             </main>
@@ -182,9 +171,7 @@ function App() {
     }
     else if(page == Page.Shared){
         return <>
-            <Header loggedIn={!!user} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} 
-            term={term} user={sharedUser} academicYear={academicYear} setAcademicYear={setAcademicYear} 
-            setSections={setSections} sections={sections} setIsCourses={setIsCourses} years={years} setYears={setYears}/>
+            <Header loggedIn={!!user} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} setAcademicYear={setAcademicYear} setSections={setSections} sections={sections} setIsCourses={setIsCourses} />
             <main>
                 <div class="centered button-div">
                     <AcademicYearSelect setYear={setAcademicYear} years={years} year={academicYear} />
@@ -205,9 +192,7 @@ function App() {
         }
         
         return <>
-            <Header loggedIn={!!user} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} 
-            term={term} user={user} academicYear={academicYear} setAcademicYear={setAcademicYear} 
-            setSections={setSections} sections={sections} setIsCourses={setIsCourses} years={years} setYears={setYears}/>
+            <Header loggedIn={!!user} setUser={setUser} loadIndex={loadIndex} loadLogin={loadLogin} setAcademicYear={setAcademicYear} setSections={setSections} sections={sections} setIsCourses={setIsCourses} />
             <main>
                 {isCourses && <div class='centered button-div'>
                     <AcademicYearSelect setYear={setAcademicYear} years={years} year={academicYear} />
@@ -222,9 +207,10 @@ function App() {
                                 <p class='centered-text'>Log in to save your schedule.</p>
                                 <Schedule sections={filteredSections}/>
                             </>)
-                        : (<>
+                        : (sections.length > 0 ?
+                            <p class="centered-text">Your schedule does not include any courses for this term. Try uploading a different schedule.</p> : 
                             <p class='centered-text'>Upload your schedule to view or share it.</p>
-                        </>)
+                        )
                     }
                 </div>
                 <div class='centered button-div'>

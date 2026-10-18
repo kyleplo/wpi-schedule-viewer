@@ -1,9 +1,10 @@
+import { useSignal } from "@preact/signals";
 import { useRef, useState, useEffect } from "preact/hooks";
 export function ShareDialog(props : {user:string}){
     //get the website name
     const link = `${window.location.origin}/user/${props.user}`;
     const dialogRef = useRef<HTMLDialogElement>(null);
-    const timerId=useRef<number |undefined | null>(null)
+    const timerId = useSignal<number |undefined | null>(null)
     const [isCopied, setCopied] = useState(false)
     const copyLink = async ()=>{
         try{
@@ -14,13 +15,13 @@ export function ShareDialog(props : {user:string}){
 
     useEffect(() =>{
         if(isCopied){
-            if (timerId.current) clearTimeout(timerId.current);
-            timerId.current = setTimeout(()=>{
+            if (timerId.value) clearTimeout(timerId.value);
+            timerId.value = setTimeout(()=>{
                 setCopied(false)
             }, 5000)
         }
         return () =>{
-            if (timerId.current) clearTimeout(timerId.current);
+            if (timerId.value) clearTimeout(timerId.value);
         }
     },[isCopied])
     const openDialog = () =>{
@@ -34,14 +35,19 @@ export function ShareDialog(props : {user:string}){
             <dialog ref={dialogRef} id='share'>
                 <div class="flex">
                     <div>
-                        <p>Want to share your schedule with other users?</p>
-                        <p>Click 'copy' and send them this link!</p>
+                        <p>Want to share your schedule with other users? Copy or share this link.</p>
                     </div>
                     <button class="close-button" onClick={closeDialog}>X</button>
                     </div>
                 <input type='text' name="copyLink" readonly value={link}/> 
                 {isCopied ? <button class='copied' onClick={copyLink}>Copied</button>
                     : <button onClick={copyLink}>Copy</button>}
+                <button onClick={() => {
+                    navigator.share({
+                        title: "WPI Schedule",
+                        url: link
+                    })
+                }}>Share</button>
             </dialog>
         </>)
 }
