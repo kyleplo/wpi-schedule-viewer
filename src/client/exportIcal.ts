@@ -31,6 +31,7 @@ export function exportIcal(sections: CourseSection[]) {
                 repeating: {
                     freq: ICalEventRepeatingFreq.WEEKLY,
                     until: termEnd,
+                    exclude : [],
                 }
             })
         })
