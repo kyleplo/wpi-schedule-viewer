@@ -1,5 +1,7 @@
 import { load } from "cheerio"
 import { altDay } from "../shared/types.js"
+import { AlternateDate, AlternateDateDocument } from "./models.js"
+
 export async function fetchCalenderData(){
     //extract the last two digits from the year
     let year: number =  new Date().getFullYear() % 2000
@@ -22,11 +24,11 @@ export async function fetchCalenderData(){
         "September" : 8, "October" : 9, "November" : 10, "December" : 11
     }
     enum Days {
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday"
+        "Monday" = "M",
+        "Tuesday" = "T",
+        "Wednesday" = "W",
+        "Thursday" = "R",
+        "Friday" = "F"
     }
     year = year + 2000;
     tables.each((i, table) => {
@@ -45,15 +47,26 @@ export async function fetchCalenderData(){
             if(dateDescription.includes("Follow")){
                 const day = $(row).first().text();
                 let schedule = ""
-                Object.keys(Days).forEach(weekday => {
+                Object.entries(Days).forEach(([weekday, abbreviation]) => {
                     if (dateDescription.includes(weekday)){
-                        schedule = weekday
+                        schedule = abbreviation
                     }
                 });
                 altDays.push({"date" : new Date(year, monthIndex, parseInt(day)), "schedule" : schedule})
             }
         })
     })
-    console.log(daysOff)
-    console.log(altDays)
+    const dateObjects : AlternateDateDocument [] = []
+
+    daysOff.forEach((day) =>{
+        const dateObject =  new AlternateDate({date : day})
+        dateObjects.push(dateObject)
+    })
+    altDays.forEach((day) =>{
+        const dateObject =  new AlternateDate({
+            date : day.date,
+            schedule : day.schedule})
+        dateObjects.push(dateObject)
+    })
+    await AlternateDate.bulkSave(dateObjects as any)
 }

@@ -79,6 +79,20 @@ courseSectionSchema.index({
 export type CourseSectionDocument = InferSchemaType<typeof courseSectionSchema>;
 export const CourseSection = model<CourseSectionDocument>("CourseSection", courseSectionSchema);
 
+const alternateDatesSchema = new Schema({
+    date : {
+        required : true,
+        type: Date,
+    },
+    schedule:{
+        required : false,
+        type : String,
+        enum: ['M', 'T', 'W', 'R', 'F']
+    }
+})
+export type AlternateDateDocument = InferSchemaType<typeof alternateDatesSchema>;
+export const AlternateDate = model ("AlternateDates", alternateDatesSchema);
+
 const courseDbStatusSchema = new Schema({
     lastUpdate: {
         required: true,
