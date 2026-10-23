@@ -143,14 +143,15 @@ main{
 
 /* MAIN PAGE */
 .button-div{
-    width:max-content;
+    text-align: center;
 
     button, select{
         display:inline;
+        margin-top: 0.5rem;
     }
     
     > button:nth-child(n + 1), > select:nth-child(n + 1){
-        margin-left:1rem;
+        margin-left:0.5rem;
     }
 }
 
@@ -206,6 +207,7 @@ dialog{
     display: grid;
     grid-auto-rows:minmax(5px, auto);
     grid-template-columns:1fr repeat(5, 3fr);
+    min-width: 800px;
 
     div {
         padding: 5px;
@@ -215,6 +217,13 @@ dialog{
         font-weight: bold;
         text-align: center;
     }
+
+    .time-label {
+        position: sticky;
+        left: 0;
+        background-color: #fff;
+    }
+
     .header-stripe {
         background-color: #ccc;
         grid-row: 1;

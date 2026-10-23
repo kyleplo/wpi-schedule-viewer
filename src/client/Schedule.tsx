@@ -21,7 +21,7 @@ export function Schedule(props: {sections: CourseSection[]}) {
                     gridRow: timeToRow(hour * 60, extremes.earliest) + " / " + timeToRow((hour + 1) * 60, extremes.earliest),
                     gridColumn: "1 / 7"
                 }}></div> : null}
-                <div class="time-label" style={{
+                <div class={hourIndex % 2 == 1 ? "time-label time-stripe" : "time-label"} style={{
                     gridRow: timeToRow(hour * 60, extremes.earliest) + " / " + timeToRow((hour + 1) * 60, extremes.earliest),
                     gridColumn: 1
                 }}>
