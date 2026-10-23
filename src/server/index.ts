@@ -45,11 +45,10 @@ export default {
     const courseDbStatus = await CourseDBStatus.findOne() || new CourseDBStatus({
       lastUpdate: 0
     });
-    await fetchCalenderData()
-
 
     if (Date.now() > courseDbStatus.lastUpdate + 86400000) {
       await fetchCourseData();
+      await fetchCalenderData();
 
       courseDbStatus.lastUpdate = Date.now();
       await courseDbStatus.save();
