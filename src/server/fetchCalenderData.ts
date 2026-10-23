@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { altDay } from "../shared/types.js"
+import { AltDay } from "../shared/types.js"
 import { AlternateDate, AlternateDateDocument } from "./models.js"
 
 export async function fetchCalenderData(){
@@ -14,7 +14,7 @@ export async function fetchCalenderData(){
     const page: string = await response.text()
     //console.log(`page${page}`)
     //loads the html into the cheerio DOM
-    const altDays : altDay[]= []
+    const altDays : AltDay[]= []
     const daysOff: Date[] = []
     let $ = load(page)
     let tables = $('table')
@@ -24,11 +24,11 @@ export async function fetchCalenderData(){
         "September" : 8, "October" : 9, "November" : 10, "December" : 11
     }
     enum Days {
-        "Monday" = "M",
-        "Tuesday" = "T",
-        "Wednesday" = "W",
-        "Thursday" = "R",
-        "Friday" = "F"
+        "Monday" = "0",
+        "Tuesday" = "1",
+        "Wednesday" = "2",
+        "Thursday" = "3",
+        "Friday" = "4"
     }
     year = year + 2000;
     tables.each((i, table) => {
@@ -46,10 +46,12 @@ export async function fetchCalenderData(){
             }
             if(dateDescription.includes("Follow")){
                 const day = $(row).first().text();
-                let schedule = ""
-                Object.entries(Days).forEach(([weekday, abbreviation]) => {
+                let schedule: number = -1
+                Object.entries(Days).forEach(([weekday, num]) => {
+                    //console.log(weekday)
                     if (dateDescription.includes(weekday)){
-                        schedule = abbreviation
+                        schedule = parseInt(num)
+                        console.log(schedule)
                     }
                 });
                 altDays.push({"date" : new Date(year, monthIndex, parseInt(day)), "schedule" : schedule})

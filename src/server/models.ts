@@ -83,11 +83,14 @@ const alternateDatesSchema = new Schema({
     date : {
         required : true,
         type: Date,
+        unique : true
     },
     schedule:{
         required : false,
-        type : String,
-        enum: ['M', 'T', 'W', 'R', 'F']
+        //0 for Monday
+        type: Number,
+                min: 0,
+                max: 6,
     }
 })
 export type AlternateDateDocument = InferSchemaType<typeof alternateDatesSchema>;

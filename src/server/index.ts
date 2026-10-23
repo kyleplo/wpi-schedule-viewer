@@ -9,6 +9,7 @@ import cookieSession from 'cookie-session';
 import { authRoutes } from "./auth.js";
 import { CourseDBStatus } from "./models.js";
 import { fetchCalenderData } from "./fetchCalenderData.js";
+import { dateRoutes } from "./dates.js";
 
 const app: express.Express = express()
 
@@ -24,6 +25,7 @@ app.use(cookieSession({
 }))
 authRoutes(app);
 courseRoutes(app);
+dateRoutes(app);
 app.listen(3000)
 
 export default {
@@ -43,10 +45,11 @@ export default {
     const courseDbStatus = await CourseDBStatus.findOne() || new CourseDBStatus({
       lastUpdate: 0
     });
+    await fetchCalenderData()
+
 
     if (Date.now() > courseDbStatus.lastUpdate + 86400000) {
       await fetchCourseData();
-        await fetchCalenderData()
 
       courseDbStatus.lastUpdate = Date.now();
       await courseDbStatus.save();

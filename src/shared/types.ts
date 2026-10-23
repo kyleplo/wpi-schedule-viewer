@@ -49,7 +49,7 @@ export type CourseListingsCourseSection = {
     "Course_Section_End_Date": string,
     "Meeting_Day_Patterns": string,
 }
-export type altDay = {
+export type AltDay = {
     "date" : Date, 
-    "schedule" : string
+    "schedule" : number
 }
