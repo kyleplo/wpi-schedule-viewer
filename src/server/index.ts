@@ -29,7 +29,24 @@ app.listen(3000)
 export default {
   async fetch(req: Request, env: Env) {
     if (req.url.includes("/api/")) {
-      await mongoose.connect(uri)
+      let tries = 0;
+      while (tries < 3 && mongoose.connection.readyState !== 1) {
+        await mongoose.connect(uri)
+
+        // @ts-ignore
+        if (mongoose.connection.readyState !== 1) {
+          await new Promise((r => setTimeout(r, 500)));
+        }
+      }
+
+      if (mongoose.connection.readyState !== 1) {
+        return new Response(JSON.stringify({
+          error: "Failed to reach database"
+        }), {
+          status: 500
+        })
+      }
+
       const res = await handleAsNodeRequest(3000, req);
       await mongoose.disconnect();
       return res;
