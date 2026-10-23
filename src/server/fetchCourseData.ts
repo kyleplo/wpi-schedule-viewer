@@ -7,7 +7,7 @@ export async function fetchCourseData() {
     // Fetch data
     let url = 'https://courselistings.wpi.edu/assets/prod-data.json'
     const response = await fetch(url)
-    const data = await response.json()
+    const data : any = await response.json()
     const yearcounts: { year: number, count: number }[] = []
 
     // Convert data to CourseSection objects
