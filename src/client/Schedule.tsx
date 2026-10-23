@@ -1,7 +1,7 @@
 import { CourseSection } from "../shared/types"
 import { mostExtremeTimes, formatTime } from "../shared/util"
 
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 export function Schedule(props: {sections: CourseSection[]}) {
     const extremes = mostExtremeTimes(props.sections);

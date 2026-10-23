@@ -10,6 +10,7 @@ import { filterCourseSections } from "../shared/util"
 import { ShareDialog } from "./ShareDialog.jsx";
 import { TermSelect } from "./TermSelect.js"
 import { AcademicYearSelect } from "./AcademicYearSelect.jsx";
+import { ScheduleList } from "./ScheduleList.jsx";
 
 function getAcademicYearAndTerm(): { year: number, term: Types.Term } {
     const date = new Date();
@@ -180,6 +181,9 @@ function App() {
                 <div class="sidescroller">
                     <Schedule sections={filteredSections} />
                 </div>
+                <ScheduleList sections={filteredSections} removeCourse={!!user && user === sharedUser && ((section: Types.CourseSection) => {
+                    setSections(sections.filter(s => s.code !== section.code || s.section !== section.section || s.academicYearStart !== section.academicYearStart));
+                })} />
             </main>
         </>
     }
@@ -224,6 +228,9 @@ function App() {
                         {user && <ShareDialog user={user}/>}
                     </>}
                 </div>
+                <ScheduleList sections={filteredSections} removeCourse={!!user && ((section: Types.CourseSection) => {
+                    setSections(sections.filter(s => s.code !== section.code || s.section !== section.section || s.academicYearStart !== section.academicYearStart));
+                })} />
             </main>
         </>
     }

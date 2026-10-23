@@ -227,7 +227,7 @@ dialog{
 
     .course-section {
         margin: 2px;
-        background-color: #ddd;
+        background-color: var(--course-color, #ddd);
 
         p {
              margin-top: 0;
@@ -238,41 +238,62 @@ dialog{
             font-weight: bold;
         }
     }
+}
 
-    .course0{
-        background-color:rgb(218, 127, 75);
+.course0{
+    --course-color: rgb(218, 127, 75);
+}
+.course1{
+    --course-color: rgb(124, 180, 220);
+}
+.course2{
+    --course-color: rgb(219, 172, 31);
+}
+.course3{
+    --course-color: rgb(103, 164, 62);
+}
+.course4{
+    --course-color: rgb(168, 117, 197);
+}
+.course5{
+    --course-color: rgb(46, 168, 163);
+}
+.course6{
+    --course-color: rgb(227, 137, 132);
+}
+.course7{
+    --course-color: rgb(100, 100, 193);
+}
+.course8{
+    --course-color: rgb(117, 212, 180);
+}
+.course9{
+    --course-color: rgb(212, 174, 117);
+}
+.course10{
+    --course-color: rgb(155, 199, 97);
+}
+.course11{
+    --course-color: rgb(163, 101, 126);
+}
+
+.schedule-list {
+    padding-inline-start: 0;
+    list-style-type: none;
+
+    p {
+        font-weight: bold;
+        margin: 0.25em;
     }
-    .course1{
-        background-color:rgb(124, 180, 220);
+
+    & > li {
+        border-left: solid 5px var(--course-color, #ddd);
+        background-color: color-mix(in srgb, var(--course-color, #ddd), white);
+        padding: 0.5em;
+        margin: 0.5em 0;
     }
-    .course2{
-        background-color:rgb(219, 172, 31);
-    }
-    .course3{
-        background-color:rgb(103, 164, 62);
-    }
-    .course4{
-        background-color:rgb(168, 117, 197);
-    }
-    .course5{
-        background-color:rgb(46, 168, 163);
-    }
-    .course6{
-        background-color:rgb(227, 137, 132);
-    }
-    .course7{
-        background-color:rgb(100, 100, 193);
-    }
-    .course8{
-        background-color:rgb(117, 212, 180);
-    }
-    .course9{
-        background-color:rgb(212, 174, 117);
-    }
-    .course10{
-        background-color:rgb(155, 199, 97);
-    }
-    .course11{
-        background-color:rgb(163, 101, 126);
+
+    button {
+        margin-top: 0.5em;
     }
 }

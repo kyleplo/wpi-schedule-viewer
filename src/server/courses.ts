@@ -26,6 +26,34 @@ export function courseRoutes(app: express.Express) {
         res.status(200).json(courseSections);
     });
 
+    app.delete("/api/courses", async (req, res) => {
+        const user = await getUserByToken(req.session?.token);
+
+        if (!user) {
+            res.status(404).json({
+                error: "User not found"
+            });
+            return;
+        }
+
+        if (!req.query.code || !req.query.section || !req.query.academicYear) {
+            res.status(400).json({
+                error: "Missing required parameters"
+            });
+            return;
+        }
+
+        const newCourses = user.courses.filter(s => s.code !== req.query.code || s.section !== req.query.section || s.academicYear !== parseInt(req.query.academicYear as string));
+        user.set('courses', newCourses);
+        await user.save()
+        if (!newCourses.length) {
+            res.status(200).json([]);
+            return;
+        }
+        const courseSections = await getCourseSections(newCourses);
+        res.json(courseSections);
+    });
+
     // Handles receiving the .xlsx file from the user
     app.post("/api/courses", (req: express.Request, res: express.Response) => {
         const bb = busboy({ headers: req.headers, });
